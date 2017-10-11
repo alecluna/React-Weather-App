@@ -1,0 +1,15 @@
+body {
+  font-family: sans-serif;
+  font-size: 50px;
+  text-align: center;
+  padding: 1em;
+}
+
+#root { 
+  
+  /*display: grid;
+  grid-column: 10% 80% 10%;*/
+  background-color: #D4D3D3
+}
+
+
