@@ -1,59 +1,59 @@
 import React, { Component } from 'react';
-import Weather from './Components/Weather';
-import WeatherFind from './Components/WeatherFind'
+import Request from 'superagent';
+import _ from 'lodash';
+//import Weather from './Components/Weather';
+//import WeatherFind from './Components/WeatherFind'
 
 
 class App extends Component {
 
   constructor() {
     super();
-      // this.state = {
+    this.state = {};
 
-      //   weather: [
-
-      //     { city: '' }
-      //     // { city: 'Rocklin', temp: '86', rain: 'no' },
-      //     // { city: 'Roseville', temp: '68', rain: 'no' }
-
-      //   ]};
-    }
-  
-    ComponentWillMount() { 
-
-      this.setState({
-        weather: [
-
-          // { city: 'Sacramento', temp: '47', rain: false },
-          // { city: 'Rocklin', temp: '86', rain: false },
-          // { city: 'Roseville', temp: '68', rain: true }
-
-        ]
-      });
-
-    }
-
-    handleAddWeather(weather){
-      console.log(weather)
-      // let newWeather = this.state.weather; 
-      // weather.push(newWeather);
-      // this.setState({weather});
-      this.setState({weather});
-      this.state.weather.map(weather => { console.log("current state" + weather)  }); //this breaks app
-    }
-
-    render() {
-
-      return (
-        <div>
-          Weather App
-          <WeatherFind addWeather={this.handleAddWeather.bind(this)} />
-          <Weather weather={this.weather} />
-        </div>
-      );
-    }
   }
 
+  componentWillMount() {
+
+    this.setState({
+      weather: [ //api call goes here
+
+        { city: 'Sacramento', temp: '47', rain: false },
+        { city: 'Rocklin', temp: '86', rain: false },
+        { city: 'Roseville', temp: '68', rain: true }
+
+      ]
+    });
+
+  }
+
+  componentDidMount(){
+    //called after component has been rendered into the page
+  }
+
+  componentWillReceiveProps(){
+    //called when the props provided to the component are changed
+  }
+
+  updateSearch(e) {
+      //a weather handler
+  }
+
+  render() { //use lodash for on map() for better persformance
+      let weather = _.map(this.state.weather, (passedInWeather) => {
+            return <li>{passedInWeather.city} - {passedInWeather.temp} Deg</li>;
+      });
+    return (
+      <div>
+        Weather App 
+        <input ref="query" onChange={ (e) => {this.updateSearch(e);} } type="text"/>
+        <ul> {weather} </ul>
+        </div>
+    );
+  }
+}
 
 
 
-  export default App;
+
+export default App;
