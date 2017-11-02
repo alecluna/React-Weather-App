@@ -15,45 +15,54 @@ class App extends Component {
 
   componentWillMount() {
 
-    this.setState({
-      weather: [ //api call goes here
-
-        { city: 'Sacramento', temp: '47', rain: false },
-        { city: 'Rocklin', temp: '86', rain: false },
-        { city: 'Roseville', temp: '68', rain: true }
-
-      ]
-    });
-
+   this.search()
+   
   }
 
-  componentDidMount(){
+  componentDidMount() {
     //called after component has been rendered into the page
   }
 
-  componentWillReceiveProps(){
+  componentWillReceiveProps() {
     //called when the props provided to the component are changed
   }
 
-  updateSearch(e) {
-      //a weather handler
+  updateSearch() {
+    this.search(this.refs.query.value);
   }
 
   render() { //use lodash for on map() for better persformance
-      let weather = _.map(this.state.weather, (passedInWeather) => {
-            return <li>{passedInWeather.city} - {passedInWeather.temp} Deg</li>;
+    //const number = [1,2,3,4,5];
+    let weather;
+    if (this.state.condition) {
+      weather = _.map(this.state.condition, (passedInWeather, index) => {
+
+        return <li key={index}> {passedInWeather} </li>;
       });
+    }
     return (
       <div>
-        Weather App 
-        <input ref="query" onChange={ (e) => {this.updateSearch(e);} } type="text"/>
-        <ul> {weather} </ul>
-        </div>
+        Weather App
+        <input ref="query" onChange={(e) => { this.updateSearch(e); }} type="text" />
+        <div> {weather} </div>
+      </div>
     );
   }
+
+
+  search(query = "Sacramento") {
+
+    var searchText = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"${query}\")';
+    var url = "https://query.yahooapis.com/v1/public/yql?q="+searchText+"&format=json";
+    Request.get(url).then((response) => {
+      this.setState({
+        condition: response.body.query.results.channel.item.condition
+      });
+      console.log(response.body.query.results);      
+      console.log(response.body.query.results.channel.item.condition);
+    });
+
+  }
 }
-
-
-
 
 export default App;
