@@ -10,13 +10,31 @@ class App extends Component {
   constructor() {
     super();
     this.state = {};
-
   }
 
   componentWillMount() {
 
-   this.search()
-   
+    this.search()
+
+  }
+
+  search(query = "los angeles") {
+
+    var searchText = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + query + '")';
+    var url = "https://query.yahooapis.com/v1/public/yql?q=" + searchText + "&format=json";
+
+    if (url != null) {
+      Request.get(url).then((response) => {
+        this.setState({
+          condition: response.body.query.results.channel.item.condition,
+          city: response.body.query.results.channel.location.city
+        });
+        console.log(response.body.query);
+        console.log(response.body.query.results);
+        console.log(response.body.query.results.channel.location.city);
+      }, reason => { console.log("api fucked up")});
+    }
+
   }
 
   componentDidMount() {
@@ -43,26 +61,14 @@ class App extends Component {
     return (
       <div>
         Weather App
-        <input ref="query" onChange={(e) => { this.updateSearch(e); }} type="text" />
-        <div> {weather} </div>
+        <input ref="query" onChange={(e) => { this.updateSearch(); }} type="text" />
+        <div>
+          {weather}
+        </div>
       </div>
     );
   }
 
-
-  search(query = "Sacramento") {
-
-    var searchText = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\"${query}\")';
-    var url = "https://query.yahooapis.com/v1/public/yql?q="+searchText+"&format=json";
-    Request.get(url).then((response) => {
-      this.setState({
-        condition: response.body.query.results.channel.item.condition
-      });
-      console.log(response.body.query.results);      
-      console.log(response.body.query.results.channel.item.condition);
-    });
-
-  }
 }
 
 export default App;
