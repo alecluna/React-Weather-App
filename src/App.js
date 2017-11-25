@@ -24,7 +24,11 @@ class App extends Component {
     var url = "https://query.yahooapis.com/v1/public/yql?q=" + searchText + "&format=json";
 
     if (url != null) {
+<<<<<<< HEAD
       Request.get(url).then((response) => { //chain promise, call api and catch error 
+=======
+      Request.get(url).then((response) => {
+>>>>>>> origin/master
         this.setState({
           condition: response.body.query.results.channel.item.condition,
           city: response.body.query.results.channel.location.city
@@ -32,6 +36,7 @@ class App extends Component {
         console.log(response.body.query);
         console.log(response.body.query.results);
         console.log(response.body.query.results.channel.location.city);
+<<<<<<< HEAD
       }, reason => { 
         console.log(reason + " --- reason was hit")
       }).catch((error) =>{ //added catch statement for better error handling 
@@ -40,6 +45,11 @@ class App extends Component {
 
       }); //now no errors get thrown while searching api >:)
     }
+=======
+      }, reason => { console.log("api fucked up")});
+    }
+
+>>>>>>> origin/master
   }
 
   componentDidMount() {
@@ -69,7 +79,10 @@ class App extends Component {
         Weather App
         <input ref="query" onChange={(e) => { this.updateSearch(); }} type="text" />
         <div>
+<<<<<<< HEAD
           
+=======
+>>>>>>> origin/master
           {weather}
         </div>
       </div>
