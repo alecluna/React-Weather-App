@@ -3,8 +3,7 @@ import TextField from "../node_modules/@material-ui/core/TextField";
 import CardContent from "../node_modules/@material-ui/core/CardContent";
 import Typography from "../node_modules/@material-ui/core/Typography";
 import List from "../node_modules/@material-ui/core/List";
-import ListItem from "../node_modules/@material-ui/core/ListItem";
-import ListItemText from "../node_modules/@material-ui/core/ListItemText";
+
 import CardMedia from "@material-ui/core/CardMedia";
 import Paper from "@material-ui/core/Paper";
 import Button from "../node_modules/@material-ui/core/Button";
@@ -74,16 +73,18 @@ class App extends Component {
 
     return (
       <div>
-        <Typography variant="display1" style={styles.titleStyle}>
-          Enter a City
-        </Typography>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Typography variant="display1" style={styles.titleStyle}>
+            Enter a City
+          </Typography>
 
-        <TextField
-          label="Enter a City"
-          margin="normal"
-          onChange={this._updateSearch.bind(this)}
-          value={city}
-        />
+          <TextField
+            label="Enter a City"
+            margin="normal"
+            onChange={this._updateSearch.bind(this)}
+            value={city}
+          />
+        </div>
         <Button variant="outlined" size="medium" color="primary">
           Continue
         </Button>
@@ -104,8 +105,8 @@ class App extends Component {
                 <li>{condition.temp}</li>
                 <li>{condition.text}</li>
               </List>
-              <p> Current wind speeds: {wind.speed} </p>
-              <p> Your 10 day forecast in {city} </p>
+              <Typography> Current wind speeds: {wind.speed} </Typography>
+              <Typography> Your 10 day forecast in {city} </Typography>
               <div style={styles.forecastStyle}> {cityForecast} </div>
             </CardContent>
           </div>
