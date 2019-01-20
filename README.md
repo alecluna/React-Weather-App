@@ -6,5 +6,5 @@ Calls a Yahoo Weather API, parses through the given JSON and renders/updates the
 
 Learned to use the map() function and other ES6 features when displaying a list of data to be updated on each click event. 
 
-## Hot to run ##
+## How to run ##
 run with `npm install` and `npm start`
