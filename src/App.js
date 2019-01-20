@@ -1,113 +1,119 @@
-import React, { Component } from 'react';
-import Request from 'superagent';
+import React, { Component } from "react";
+import TextField from "../node_modules/@material-ui/core/TextField";
+import CardContent from "../node_modules/@material-ui/core/CardContent";
+import Typography from "../node_modules/@material-ui/core/Typography";
+import List from "../node_modules/@material-ui/core/List";
+import ListItem from "../node_modules/@material-ui/core/ListItem";
+import ListItemText from "../node_modules/@material-ui/core/ListItemText";
+import CardMedia from "@material-ui/core/CardMedia";
+import Paper from "@material-ui/core/Paper";
+import Button from "../node_modules/@material-ui/core/Button";
+
+const styles = {
+  titleStyle: {
+    fontSize: "30",
+    fontWeight: "200"
+  },
+  forecastStyle: {
+    listStyleType: "none"
+  }
+};
 
 class App extends Component {
-
   constructor() {
     super();
     this.state = {
       condition: {},
       forecast: [],
       wind: {},
-      city: ''
+      city: ""
     };
-    this.updateSearch = this.updateSearch.bind(this); //assigning to use late and pass down 'state' to child components
   }
 
   componentDidMount() {
-    /*
-    Using componentDidMount makes it clear that data won’t be loaded until after the initial render.
-    */
-    this.search()
+    this.search();
   }
 
-  search(query = "los angeles") {
-    // debugger; add this to debug in dev tools
-    var searchText = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + query + '")';
-    var url = "https://query.yahooapis.com/v1/public/yql?q=" + searchText + "&format=json";
+  search(query) {
+    let searchText = `select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="${query}")`;
+    let url = `https://query.yahooapis.com/v1/public/yql?q=${searchText}&format=json`;
 
-    if (url != null) {
-      Request.get(url).then((response) => { //chain promise, call api and catch error 
-        this.setState({
-          condition: response.body.query.results.channel.item.condition,
-          city: response.body.query.results.channel.location.city,
-          forecast: response.body.query.results.channel.item.forecast,
-          wind: response.body.query.results.channel.wind
+    if (url) {
+      fetch(url)
+        .then(response => {
+          this.setState({
+            condition: response.body.query.results.channel.item.condition,
+            city: response.body.query.results.channel.location.city,
+            forecast: response.body.query.results.channel.item.forecast,
+            wind: response.body.query.results.channel.wind
+          });
+        })
+        .catch(error => {
+          console.log(error + "error caught");
         });
-        console.log(response.body.query);
-        console.log(response.body.query.results.channel.item.forecast);
-        console.log(response.body.query.results.channel.wind);
-        console.log(this.state.city);
-        console.log(response.body.query.results.channel);
-
-      }, reason => {
-        console.log(reason + " --- reason was hit")
-      }).catch((error) => { //added catch statement for better error handling 
-
-        console.log(error + "error caught")
-
-      }); //now no errors get thrown while searching api >:)
-
+    } else {
+      console.log("Search query failed");
     }
   }
-  componentWillReceiveProps() {
-    //called when the props provided to the component are changed
-  }
 
-  updateSearch() {
+  _updateSearch() {
     this.search(this.refs.query.value);
   }
 
-  render() { //use lodash on map() for better persformance
-    //const number = [1,2,3,4,5];
-    const titleStyle = {
-      fontSize: '30',
-      fontWeight: '200',
-    }
-
-    const forecastStyle = {
-
-      listStyleType: 'none'
-    }
-
-    let condition = this.state.condition;
-    let city, forecast, wind, cityForecast;
-    if (condition) {
-
-      city = this.state.city
-      forecast = this.state.forecast;
-      wind = this.state.wind;
-      console.log(wind);
-      //map through forecast
-      cityForecast = this.state.forecast.map((forecast, index) => {
-        return <li key={index.toString()}> For {forecast.day}: High:{forecast.high} - Low:{forecast.low} </li>
-      });
-  
-    }
+  render() {
+    const { condition, city, forecast, wind } = this.state;
+    let cityForecast = forecast.map((forecast, index) => {
+      return (
+        <li key={index.toString()}>
+          For {forecast.day}: High:
+          {forecast.high} - Low:
+          {forecast.low}
+        </li>
+      );
+    });
 
     return (
       <div>
-        <p style={titleStyle}> Enter a City </p>
-        <input ref="query" onChange={this.updateSearch} type="text" />
-        <div>
-          <p> Welcome, in {city}, it is: </p>
-          <ul>
-            <li>{condition.date}</li>
-            <li>{condition.temp}</li>
-            <li>{condition.text}</li>
-          </ul>
-        </div>
-        <div>
-          <p> Wind Chill feels like {wind.chill}, in {city} </p>
-          <p> Current wind speeds: {wind.speed} </p>
-          <p> Your 10 day forecast in {city}  </p>
-          <div style={forecastStyle}> {cityForecast} </div>
+        <Typography variant="display1" style={styles.titleStyle}>
+          Enter a City
+        </Typography>
 
-        </div>
+        <TextField
+          label="Enter a City"
+          margin="normal"
+          onChange={this._updateSearch.bind(this)}
+          value={city}
+        />
+        <Button variant="outlined" size="medium" color="primary">
+          Continue
+        </Button>
+        <Paper>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start"
+            }}
+          >
+            <CardMedia image="/Users/alecluna/Documents/react-weather-appV2/sunny.png" />
+            <CardContent>
+              <Typography variant="display3" style={styles.titleStyle}>
+                Welcome, in {city} it is:
+              </Typography>
+              <List>
+                <li>{condition.temp}</li>
+                <li>{condition.text}</li>
+              </List>
+              <p> Current wind speeds: {wind.speed} </p>
+              <p> Your 10 day forecast in {city} </p>
+              <div style={styles.forecastStyle}> {cityForecast} </div>
+            </CardContent>
+          </div>
+        </Paper>
+        <div />
       </div>
     );
   }
-
 }
 
 export default App;
